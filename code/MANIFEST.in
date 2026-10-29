@@ -1,0 +1,1 @@
+recursive-include page_analyzer/templates *.html

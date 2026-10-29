@@ -1,38 +1,27 @@
-# Анализатор страниц на FastAPI
+# Анализатор страниц
 
 [![hexlet-check](https://github.com/lyovaparsyan94/fastapi-project-317/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/lyovaparsyan94/fastapi-project-317/actions)
 
-Создадите полноценное веб-приложение, которое выполняет запросы по сети и сохраняет данные в базу. Настроите CI и выполните деплой.
+Веб-приложение на FastAPI, которое проверяет страницы на SEO-пригодность: сохраняет
+адреса сайтов, по запросу ходит к ним, записывает код ответа и содержимое тегов
+`h1`, `title` и `meta[name=description]`.
 
-Учебный проект Хекслета: https://ru.hexlet.io/programs/fastapi
-Как это должно работать: https://files.hexlet.app/a/vfyo3a
+**Демо:** ссылка появится после деплоя.
 
 ## Стек
 
-- Python
+FastAPI · SQLModel · Alembic · PostgreSQL · Jinja2 · Tailwind CSS · uv · ruff
 
-## Установка
+## Запуск
 
-<!-- Опишите установку: клонирование, зависимости, переменные окружения -->
+Код проекта лежит в каталоге [`code/`](code/), команды выполняются оттуда:
 
 ```bash
-git clone https://github.com/lyovaparsyan94/fastapi-project-317.git
-cd fastapi-project-317
+cd code
+cp .env.example .env
+docker compose up -d db
+make setup
+make dev
 ```
 
-## Использование
-
-<!-- Добавьте примеры запуска и запись asciinema — именно это смотрит работодатель -->
-
----
-
-<details>
-<summary>Автоматические тесты Хекслета</summary>
-
-Тесты запускаются на каждый коммит. За запуск отвечает файл `.github/workflows/hexlet-check.yml` — не удаляйте и не переименовывайте ни его, ни репозиторий.
-
-</details>
-
-## О Хекслете
-
-[Хекслет](https://ru.hexlet.io/) — школа программирования: авторские программы обучения с практикой, поддержкой наставников и реальными проектами, которые остаются в резюме. Этот репозиторий — один из таких проектов.
+Подробности — в [code/README.md](code/README.md).
