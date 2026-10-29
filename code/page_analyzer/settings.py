@@ -8,7 +8,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str
-    secret_key: str
+    # Значение по умолчанию нужно, чтобы приложение поднималось там, где секрет не задан:
+    # в CI и при прогоне миграций. В продакшене SECRET_KEY приходит из окружения.
+    secret_key: str = "insecure-development-key"
 
     @field_validator("database_url")
     @classmethod
