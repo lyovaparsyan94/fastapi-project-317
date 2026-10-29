@@ -14,3 +14,7 @@ build/
 .idea/
 .vscode/
 .DS_Store
+
+# Артефакты сборки стилей
+code/node_modules/
+code/page_analyzer/static/css/main.css

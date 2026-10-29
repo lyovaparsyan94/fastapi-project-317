@@ -1,9 +1,13 @@
 PORT ?= 8000
 
-setup: install migrate
+setup: install build-css migrate
 
 install:
 	uv sync
+	npm ci
+
+build-css:
+	npm run build:css
 
 dev:
 	uv run fastapi dev page_analyzer/app.py --port $(PORT)
@@ -26,4 +30,4 @@ render-start:
 build:
 	./build.sh
 
-.PHONY: setup install dev migrate lint test start render-start build
+.PHONY: setup install build-css dev migrate lint test start render-start build
