@@ -19,9 +19,9 @@ make setup                   # зависимости, сборка стилей
 | `make setup` | готовит проект к запуску: зависимости, стили и миграции |
 | `make build-css` | собирает `page_analyzer/static/css/main.css` из Tailwind |
 | `make install` | `uv sync` + `npm ci` |
-| `make dev` | запуск с автоперезагрузкой на `http://127.0.0.1:8000` |
+| `make dev` | `uv run fastapi dev` с автоперезагрузкой на `http://127.0.0.1:8000` |
 | `make start` | продакшен-запуск, `fastapi run` с четырьмя воркерами |
-| `make migrate` | `uv run alembic upgrade head` |
+| `make migrate` | `uv run alembic upgrade head` — применяет миграции |
 | `make lint` | `uv run ruff check .` |
 | `make test` | `uv run pytest -vv` |
 | `make build` | `./build.sh` — сборка для деплоя |

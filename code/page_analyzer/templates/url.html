@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Сайт: {{ url.name }}{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl px-4 py-6">
+  <h1 class="mb-4 text-3xl font-bold">Сайт: {{ url.name }}</h1>
+  <div class="overflow-x-auto">
+    <table class="w-full border border-gray-300 text-left text-sm" data-test="url">
+      <tbody>
+        <tr>
+          <td class="w-1/2 border border-gray-300 px-3 py-2">ID</td>
+          <td class="border border-gray-300 px-3 py-2">{{ url.id }}</td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 px-3 py-2">Имя</td>
+          <td class="border border-gray-300 px-3 py-2">{{ url.name }}</td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 px-3 py-2">Дата создания</td>
+          <td class="border border-gray-300 px-3 py-2">{{ url.created_at.strftime('%Y-%m-%d') }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="mt-8 mb-4 text-2xl font-bold">Проверки</h2>
+  <div class="overflow-x-auto">
+    <table class="w-full border border-gray-300 text-left text-sm" data-test="checks">
+      <thead>
+        <tr class="bg-gray-50">
+          <th class="border border-gray-300 px-3 py-2">ID</th>
+          <th class="border border-gray-300 px-3 py-2">Код ответа</th>
+          <th class="border border-gray-300 px-3 py-2">h1</th>
+          <th class="border border-gray-300 px-3 py-2">title</th>
+          <th class="border border-gray-300 px-3 py-2">description</th>
+          <th class="border border-gray-300 px-3 py-2">Дата создания</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

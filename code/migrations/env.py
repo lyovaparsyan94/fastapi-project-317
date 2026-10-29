@@ -7,6 +7,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from sqlmodel import SQLModel
 
+from page_analyzer import models  # noqa: F401  — модели должны быть импортированы для autogenerate
 from page_analyzer.settings import settings
 
 config = context.config
