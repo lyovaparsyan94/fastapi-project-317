@@ -15,6 +15,10 @@ dev:
 migrate:
 	uv run alembic upgrade head
 
+reset-db:
+	uv run alembic downgrade base
+	uv run alembic upgrade head
+
 lint:
 	uv run ruff check .
 
@@ -30,4 +34,4 @@ render-start:
 build:
 	./build.sh
 
-.PHONY: setup install build-css dev migrate lint test start render-start build
+.PHONY: setup install build-css dev migrate reset-db lint test start render-start build

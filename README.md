@@ -36,6 +36,7 @@ make dev                     # http://127.0.0.1:8000
 | `make dev` | `uv run fastapi dev` с автоперезагрузкой на `http://127.0.0.1:8000` |
 | `make start` | продакшен-запуск, `fastapi run` с четырьмя воркерами |
 | `make migrate` | `uv run alembic upgrade head` — применяет миграции |
+| `make reset-db` | откатывает миграции до нуля и накатывает заново |
 | `make lint` | `uv run ruff check .` |
 | `make test` | `uv run pytest -vv` |
 | `make build` | `./build.sh` — сборка для деплоя |
