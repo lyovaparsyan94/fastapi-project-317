@@ -1,4 +1,7 @@
 PORT ?= 8000
+# Render сам задаёт WEB_CONCURRENCY по размеру инстанса: на free-тарифе это 1,
+# пять воркеров в 512 МБ не помещаются и их убивает OOM.
+WORKERS ?= $(if $(WEB_CONCURRENCY),$(WEB_CONCURRENCY),5)
 
 setup: install build-css migrate
 
@@ -29,7 +32,7 @@ start:
 	uv run fastapi run page_analyzer/app.py --port $(PORT) --workers 4
 
 render-start:
-	fastapi run page_analyzer/app.py --port $(PORT) --workers 5
+	fastapi run page_analyzer/app.py --port $(PORT) --workers $(WORKERS)
 
 # Запуск на хостинге: миграции накатываются при старте контейнера,
 # на этапе сборки образа базы ещё нет.
