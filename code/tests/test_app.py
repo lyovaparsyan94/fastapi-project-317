@@ -1,3 +1,6 @@
+from datetime import UTC, datetime
+
+
 async def test_index_is_available(client):
     response = await client.get("/")
 
@@ -59,5 +62,31 @@ async def test_urls_index_shows_newest_first(client):
 
 async def test_unknown_url_returns_404(client):
     response = await client.get("/urls/999")
+
+    assert response.status_code == 404
+
+
+async def test_create_check_adds_record(client):
+    await client.post("/urls", data={"url": "https://ru.hexlet.io"})
+
+    response = await client.post("/urls/1/checks")
+    page = await client.get("/urls/1")
+
+    assert response.status_code == 302
+    assert "Страница успешно проверена" in page.text
+    assert 'data-test="checks"' in page.text
+
+
+async def test_urls_index_shows_last_check_date(client):
+    await client.post("/urls", data={"url": "https://ru.hexlet.io"})
+    await client.post("/urls/1/checks")
+
+    response = await client.get("/urls")
+
+    assert datetime.now(UTC).strftime("%Y-%m-%d") in response.text
+
+
+async def test_check_for_unknown_url_returns_404(client):
+    response = await client.post("/urls/999/checks")
 
     assert response.status_code == 404

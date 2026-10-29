@@ -25,6 +25,10 @@
   </div>
 
   <h2 class="mt-8 mb-4 text-2xl font-bold">Проверки</h2>
+  <form method="post" action="{{ url_for('url_checks_create', id=url.id) }}" class="mb-4">
+    <input type="submit" class="cursor-pointer rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+           value="Запустить проверку">
+  </form>
   <div class="overflow-x-auto">
     <table class="w-full border border-gray-300 text-left text-sm" data-test="checks">
       <thead>
@@ -37,7 +41,18 @@
           <th class="border border-gray-300 px-3 py-2">Дата создания</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody>
+        {% for check in url.checks %}
+        <tr class="hover:bg-gray-50">
+          <td class="border border-gray-300 px-3 py-2">{{ check.id }}</td>
+          <td class="border border-gray-300 px-3 py-2">{{ check.status_code or '' }}</td>
+          <td class="border border-gray-300 px-3 py-2">{{ check.h1 or '' }}</td>
+          <td class="border border-gray-300 px-3 py-2">{{ check.title or '' }}</td>
+          <td class="border border-gray-300 px-3 py-2">{{ check.description or '' }}</td>
+          <td class="border border-gray-300 px-3 py-2">{{ check.created_at.strftime('%Y-%m-%d') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>

@@ -5,13 +5,14 @@ from fastapi import FastAPI, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlmodel import col, select
+from sqlalchemy.orm import selectinload
+from sqlmodel import col, func, select
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.status import HTTP_302_FOUND, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_CONTENT
 
 from page_analyzer.db import SessionDep
 from page_analyzer.flash import flash, get_flashed_messages
-from page_analyzer.models import Url
+from page_analyzer.models import Url, UrlCheck
 from page_analyzer.settings import settings
 from page_analyzer.urls import is_valid_url, normalize_url
 
@@ -61,17 +62,41 @@ async def urls_create(
 
 @app.get("/urls", name="urls_index", response_class=HTMLResponse)
 async def urls_index(request: Request, session: SessionDep) -> HTMLResponse:
-    urls = await session.scalars(select(Url).order_by(col(Url.id).desc()))
-    return templates.TemplateResponse(request, "urls.html", {"urls": urls.all()})
+    last_check_id = (
+        select(func.max(col(UrlCheck.id)))
+        .where(col(UrlCheck.url_id) == col(Url.id))
+        .correlate(Url)
+        .scalar_subquery()
+    )
+    statement = (
+        select(Url, UrlCheck)
+        .outerjoin(UrlCheck, col(UrlCheck.id) == last_check_id)
+        .order_by(col(Url.id).desc())
+    )
+    rows = (await session.execute(statement)).all()
+    return templates.TemplateResponse(request, "urls.html", {"rows": rows})
 
 
 @app.get("/urls/{id}", name="url_show", response_class=HTMLResponse)
 async def url_show(request: Request, session: SessionDep, id: int) -> HTMLResponse:
-    url = await session.get(Url, id)
+    statement = select(Url).where(col(Url.id) == id).options(selectinload(Url.checks))
+    url = await session.scalar(statement)
     if url is None:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND)
 
     return templates.TemplateResponse(request, "url.html", {"url": url})
+
+
+@app.post("/urls/{id}/checks", name="url_checks_create")
+async def url_checks_create(request: Request, session: SessionDep, id: int) -> Response:
+    url = await session.get(Url, id)
+    if url is None:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND)
+
+    session.add(UrlCheck(url_id=id))
+    await session.commit()
+    flash(request, "Страница успешно проверена")
+    return _redirect_to_url(request, id)
 
 
 def _redirect_to_url(request: Request, id: int) -> RedirectResponse:
