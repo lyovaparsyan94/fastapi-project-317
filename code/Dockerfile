@@ -7,7 +7,7 @@ COPY assets ./assets
 COPY page_analyzer ./page_analyzer
 RUN npm run build:css
 
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /usr/local/bin/uv
 
