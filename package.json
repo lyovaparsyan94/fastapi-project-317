@@ -1,6 +1,9 @@
 {
   "name": "hexlet-code",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build:css": "tailwindcss --input assets/css/source.css --output page_analyzer/static/css/main.css --minify"
   },
