@@ -135,3 +135,21 @@ async def test_network_failure_does_not_create_check(client, count_checks):
     page = await client.get("/urls/1")
     assert "Произошла ошибка при проверке" in page.text
     assert await count_checks() == 0
+
+
+async def test_check_stores_seo_tags(client):
+    await client.post("/urls", data={"url": "https://ru.hexlet.io"})
+    html = (
+        "<html><head><title>Хекслет</title>"
+        '<meta name="description" content="Практические курсы"></head>'
+        "<body><h1>Школа программирования</h1></body></html>"
+    )
+
+    with respx.mock:
+        respx.get("https://ru.hexlet.io").mock(return_value=httpx.Response(200, html=html))
+        await client.post("/urls/1/checks")
+
+    page = await client.get("/urls/1")
+    assert "Школа программирования" in page.text
+    assert "Хекслет" in page.text
+    assert "Практические курсы" in page.text

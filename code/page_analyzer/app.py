@@ -14,6 +14,7 @@ from starlette.status import HTTP_302_FOUND, HTTP_404_NOT_FOUND, HTTP_422_UNPROC
 from page_analyzer.db import SessionDep
 from page_analyzer.flash import flash, get_flashed_messages
 from page_analyzer.models import Url, UrlCheck
+from page_analyzer.parser import parse_page
 from page_analyzer.settings import settings
 from page_analyzer.urls import is_valid_url, normalize_url
 
@@ -103,7 +104,16 @@ async def url_checks_create(request: Request, session: SessionDep, id: int) -> R
         flash(request, "Произошла ошибка при проверке", "danger")
         return _redirect_to_url(request, id)
 
-    session.add(UrlCheck(url_id=id, status_code=response.status_code))
+    page = parse_page(response.text)
+    session.add(
+        UrlCheck(
+            url_id=id,
+            status_code=response.status_code,
+            h1=page.h1,
+            title=page.title,
+            description=page.description,
+        )
+    )
     await session.commit()
     flash(request, "Страница успешно проверена")
     return _redirect_to_url(request, id)
