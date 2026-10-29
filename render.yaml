@@ -9,7 +9,6 @@ services:
     name: page-analyzer
     runtime: python
     plan: free
-    rootDir: code
     buildCommand: make build
     startCommand: make render-start
     envVars:

@@ -1,5 +1,5 @@
 {
-  "name": "page-analyzer",
+  "name": "hexlet-code",
   "private": true,
   "scripts": {
     "build:css": "tailwindcss --input assets/css/source.css --output page_analyzer/static/css/main.css --minify"

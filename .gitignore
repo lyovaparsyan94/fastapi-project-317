@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.ruff_cache/
 *.egg-info/
 dist/
 build/
@@ -10,11 +11,11 @@ build/
 .venv/
 .env
 
+# Артефакты сборки стилей
+node_modules/
+page_analyzer/static/css/main.css
+
 # Редакторы и ОС
 .idea/
 .vscode/
 .DS_Store
-
-# Артефакты сборки стилей
-code/node_modules/
-code/page_analyzer/static/css/main.css
