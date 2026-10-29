@@ -56,16 +56,22 @@ docker compose up --build
 
 ## Деплой
 
-Проект разворачивается на render.com. В корне лежит `render.yaml`: в разделе Blueprints
-нужно указать репозиторий, и Render сам создаст базу и веб-сервис.
+Проект разворачивается на render.com.
 
-При ручной настройке сервиса значения те же:
+В корне есть `Dockerfile`, поэтому Render определяет рантайм как **Docker**. В настройках
+сервиса достаточно одного поля:
 
 | Поле | Значение |
 | --- | --- |
-| Build Command | `make build` |
-| Start Command | `make render-start` |
+| Docker Command | `make render-deploy` |
 | `DATABASE_URL` | строка подключения созданной базы |
 | `SECRET_KEY` | любая случайная строка |
 
-`make render-start` запускается без `uv run`, чтобы использовать интерпретатор Render.
+`render-deploy` накатывает миграции и запускает сервер: при сборке образа база ещё
+недоступна, поэтому миграции идут при старте контейнера. Порт Render передаёт
+переменной `PORT`, Makefile её подхватывает.
+
+Для нативного Python-рантайма (его выбирает `render.yaml` в корне, вариант через
+Blueprints) значения другие: Build Command — `make build`, Start Command —
+`make render-start`. В этом случае миграции выполняет `build.sh` на этапе сборки,
+а `render-start` запускается без `uv run`, чтобы использовать интерпретатор Render.

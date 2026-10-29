@@ -31,7 +31,11 @@ start:
 render-start:
 	fastapi run page_analyzer/app.py --port $(PORT) --workers 5
 
+# Запуск на хостинге: миграции накатываются при старте контейнера,
+# на этапе сборки образа базы ещё нет.
+render-deploy: migrate render-start
+
 build:
 	./build.sh
 
-.PHONY: setup install build-css dev migrate reset-db lint test start render-start build
+.PHONY: setup install build-css dev migrate reset-db lint test start render-start render-deploy build
