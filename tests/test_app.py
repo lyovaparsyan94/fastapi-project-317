@@ -50,7 +50,14 @@ async def test_create_too_long_url_is_rejected(client):
     response = await client.post("/urls", data={"url": f"https://{'a' * 250}.com"})
 
     assert response.status_code == 422
-    assert "Некорректный URL" in response.text
+    assert "URL превышает 255 символов" in response.text
+
+
+async def test_create_empty_url_is_rejected(client):
+    response = await client.post("/urls", data={"url": ""})
+
+    assert response.status_code == 422
+    assert "URL обязателен" in response.text
 
 
 async def test_urls_index_shows_newest_first(client):

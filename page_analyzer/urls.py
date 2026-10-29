@@ -7,14 +7,16 @@ MAX_URL_LENGTH = 255
 _http_url = TypeAdapter(HttpUrl)
 
 
-def is_valid_url(url: str) -> bool:
-    if not url or len(url) > MAX_URL_LENGTH:
-        return False
+def url_error(url: str) -> str | None:
+    if not url:
+        return "URL обязателен"
+    if len(url) > MAX_URL_LENGTH:
+        return f"URL превышает {MAX_URL_LENGTH} символов"
     try:
         _http_url.validate_python(url)
     except ValidationError:
-        return False
-    return True
+        return "Некорректный URL"
+    return None
 
 
 def normalize_url(url: str) -> str:

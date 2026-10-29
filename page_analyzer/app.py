@@ -16,7 +16,7 @@ from page_analyzer.flash import flash, get_flashed_messages
 from page_analyzer.models import Url, UrlCheck
 from page_analyzer.parser import parse_page
 from page_analyzer.settings import settings
-from page_analyzer.urls import is_valid_url, normalize_url
+from page_analyzer.urls import normalize_url, url_error
 
 BASE_DIR = Path(__file__).parent
 REQUEST_TIMEOUT = 5
@@ -40,8 +40,9 @@ async def urls_create(
     session: SessionDep,
     url: Annotated[str, Form()] = "",
 ) -> Response:
-    if not is_valid_url(url):
-        flash(request, "Некорректный URL", "danger")
+    error = url_error(url)
+    if error is not None:
+        flash(request, error, "danger")
         return templates.TemplateResponse(
             request,
             "index.html",

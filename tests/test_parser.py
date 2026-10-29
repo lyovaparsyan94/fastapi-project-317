@@ -29,3 +29,18 @@ def test_parse_page_ignores_foreign_meta():
     page = parse_page('<html><head><meta name="keywords" content="python"></head></html>')
 
     assert page.description is None
+
+
+def test_parse_page_shortens_long_values():
+    long_text = "H1 Lorem ipsum " + "dolor sit amet " * 40
+    page = parse_page(f"<html><body><h1>{long_text}</h1></body></html>")
+
+    assert page.h1.startswith("H1 Lorem ipsum")
+    assert page.h1.endswith("...")
+    assert len(page.h1) == 203
+
+
+def test_parse_page_keeps_short_values_intact():
+    page = parse_page("<html><body><h1>Короткий заголовок</h1></body></html>")
+
+    assert page.h1 == "Короткий заголовок"
