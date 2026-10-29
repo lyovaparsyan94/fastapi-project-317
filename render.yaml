@@ -1,0 +1,21 @@
+databases:
+  - name: page-analyzer-db
+    plan: free
+    databaseName: page_analyzer
+    user: page_analyzer
+
+services:
+  - type: web
+    name: page-analyzer
+    runtime: python
+    plan: free
+    rootDir: code
+    buildCommand: make build
+    startCommand: make render-start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: page-analyzer-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true

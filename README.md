@@ -8,6 +8,8 @@
 
 **Демо:** ссылка появится после деплоя.
 
+Развёртывание на render.com описано в [code/README.md](code/README.md#деплой).
+
 ## Стек
 
 FastAPI · SQLModel · Alembic · PostgreSQL · Jinja2 · Tailwind CSS · uv · ruff

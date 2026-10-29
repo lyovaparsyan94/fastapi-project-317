@@ -38,3 +38,20 @@ docker compose up --build
 ```
 
 Приложение поднимется на `http://localhost:8000` после того, как база пройдёт healthcheck.
+
+## Деплой
+
+Проект разворачивается на render.com. В корне репозитория лежит `render.yaml`:
+в разделе Blueprints нужно указать репозиторий, и Render сам создаст базу и веб-сервис.
+
+При ручной настройке сервиса значения те же:
+
+| Поле | Значение |
+| --- | --- |
+| Root Directory | `code` |
+| Build Command | `make build` |
+| Start Command | `make render-start` |
+| `DATABASE_URL` | строка подключения созданной базы |
+| `SECRET_KEY` | любая случайная строка |
+
+`make render-start` запускается без `uv run`, чтобы использовать интерпретатор Render.
