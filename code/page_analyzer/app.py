@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Annotated
 
+import httpx
 from fastapi import FastAPI, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,6 +18,7 @@ from page_analyzer.settings import settings
 from page_analyzer.urls import is_valid_url, normalize_url
 
 BASE_DIR = Path(__file__).parent
+REQUEST_TIMEOUT = 5
 
 app = FastAPI(title="Анализатор страниц")
 app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)
@@ -93,7 +95,15 @@ async def url_checks_create(request: Request, session: SessionDep, id: int) -> R
     if url is None:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND)
 
-    session.add(UrlCheck(url_id=id))
+    try:
+        async with httpx.AsyncClient(follow_redirects=True, timeout=REQUEST_TIMEOUT) as client:
+            response = await client.get(url.name)
+            response.raise_for_status()
+    except httpx.HTTPError:
+        flash(request, "Произошла ошибка при проверке", "danger")
+        return _redirect_to_url(request, id)
+
+    session.add(UrlCheck(url_id=id, status_code=response.status_code))
     await session.commit()
     flash(request, "Страница успешно проверена")
     return _redirect_to_url(request, id)

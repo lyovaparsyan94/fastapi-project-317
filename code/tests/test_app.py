@@ -1,5 +1,8 @@
 from datetime import UTC, datetime
 
+import httpx
+import respx
+
 
 async def test_index_is_available(client):
     response = await client.get("/")
@@ -69,7 +72,10 @@ async def test_unknown_url_returns_404(client):
 async def test_create_check_adds_record(client):
     await client.post("/urls", data={"url": "https://ru.hexlet.io"})
 
-    response = await client.post("/urls/1/checks")
+    with respx.mock:
+        respx.get("https://ru.hexlet.io").mock(return_value=httpx.Response(200))
+        response = await client.post("/urls/1/checks")
+
     page = await client.get("/urls/1")
 
     assert response.status_code == 302
@@ -79,7 +85,10 @@ async def test_create_check_adds_record(client):
 
 async def test_urls_index_shows_last_check_date(client):
     await client.post("/urls", data={"url": "https://ru.hexlet.io"})
-    await client.post("/urls/1/checks")
+
+    with respx.mock:
+        respx.get("https://ru.hexlet.io").mock(return_value=httpx.Response(200))
+        await client.post("/urls/1/checks")
 
     response = await client.get("/urls")
 
@@ -90,3 +99,39 @@ async def test_check_for_unknown_url_returns_404(client):
     response = await client.post("/urls/999/checks")
 
     assert response.status_code == 404
+
+
+async def test_check_saves_status_code(client):
+    await client.post("/urls", data={"url": "https://ru.hexlet.io"})
+
+    with respx.mock:
+        respx.get("https://ru.hexlet.io").mock(return_value=httpx.Response(200))
+        await client.post("/urls/1/checks")
+
+    page = await client.get("/urls/1")
+    assert "Страница успешно проверена" in page.text
+    assert "200" in page.text
+
+
+async def test_server_error_does_not_create_check(client, count_checks):
+    await client.post("/urls", data={"url": "https://ru.hexlet.io"})
+
+    with respx.mock:
+        respx.get("https://ru.hexlet.io").mock(return_value=httpx.Response(500))
+        await client.post("/urls/1/checks")
+
+    page = await client.get("/urls/1")
+    assert "Произошла ошибка при проверке" in page.text
+    assert await count_checks() == 0
+
+
+async def test_network_failure_does_not_create_check(client, count_checks):
+    await client.post("/urls", data={"url": "https://ru.hexlet.io"})
+
+    with respx.mock:
+        respx.get("https://ru.hexlet.io").mock(side_effect=httpx.ConnectError("boom"))
+        await client.post("/urls/1/checks")
+
+    page = await client.get("/urls/1")
+    assert "Произошла ошибка при проверке" in page.text
+    assert await count_checks() == 0
